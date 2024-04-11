@@ -15,6 +15,9 @@ app.use(cookieParser());
 const gameRoutes = require('./routes/gameRoutes');
 app.use('/game', gameRoutes);
 
+const playerRoutes = require('./routes/playerRoutes');
+app.use('/players', playerRoutes);
+
 app.get('/', (req, res) => {
     res.send('<h1>Welcome to the Card Game API!</h1><p>Use /game to access game routes.</p>');
 });

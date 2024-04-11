@@ -1,18 +1,19 @@
 const mongoose = require('mongoose');
-const Schema = mongoose.Schema;
+const bcrypt = require('bcryptjs');
 
-const playerSchema = new Schema({
+const playerSchema = new mongoose.Schema({
     username: { type: String, required: true, unique: true },
-    email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
-    score: { type: Number, default: 0 },
-    gamesPlayed: { type: Number, default: 0 },
-    wins: { type: Number, default: 0 },
-    losses: { type: Number, default: 0 },
-    winRate: { type: Number, default: 0 },
-    cards: [{ type: Schema.Types.ObjectId, ref: 'Card' }]
+    nickname: { type: String, required: true },
+    image: { type: String, required: false }  // URL to an image
 }, { timestamps: true });
 
-const Player = mongoose.model('Player', playerSchema);
+playerSchema.pre('save', async function (next) {
+    if (this.isModified('password')) {
+        const salt = await bcrypt.genSalt(10);
+        this.password = await bcrypt.hash(this.password, salt);
+    }
+    next();
+});
 
-module.exports = Player;
+module.exports = mongoose.model('Player', playerSchema);
