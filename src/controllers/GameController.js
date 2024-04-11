@@ -11,23 +11,27 @@ exports.getGames = async (req, res) => {
 };
 
 exports.createGame = async (req, res) => {
-    if (!req.body.name) {
-        return res.status(400).json({ error: "Name is required" });
+    const { name, players, status } = req.body;
+
+    if (!name) {
+        return res.status(400).json({ error: "Name is required for creating a game." });
     }
+
     try {
         const newGame = new Game({
-            name: req.body.name,
-            players: [],
-            status: 'waiting',
-            maxPlayers: 4
+            name,
+            players,
+            status
         });
+
         await newGame.save();
-        res.status(201).json(newGame);
+        res.status(201).json({ message: "Game created successfully", game: newGame });
     } catch (error) {
         console.error("Failed to create game:", error);
-        res.status(500).json({ error: "Failed to create game" });
+        res.status(500).json({ error: "Server error during game creation", details: error.message });
     }
 };
+
 
 exports.updateStatus = async (req, res) => {
     const { status } = req.body;
