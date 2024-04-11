@@ -3,6 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <title><%= game.name %></title>
+    <script>
+        function startGame(gameId) {
+            fetch('/game/' + gameId + '/updateStatus', {
+                method: 'PATCH',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ status: 'playing' })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    window.location.reload(); // Reload the page to update the display
+                })
+                .catch((error) => {
+                    console.error('Error:', error);
+                });
+        }
+    </script>
 </head>
 <body>
 <h1>Welcome to <%= game.name %></h1>
@@ -13,6 +31,11 @@
         <li><%= player.nickname %> (<%= player.username %>)</li>
     <% }); %>
 </ul>
+
+<% if (game.status === 'waiting') { %>
+    <button onclick="startGame('<%= game._id %>')">Start Game</button>
+<% } %>
+
 <a href="/">Back to Games List</a>
 </body>
 </html>

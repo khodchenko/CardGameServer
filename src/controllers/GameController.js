@@ -70,6 +70,7 @@ exports.updateStatus = async (req, res) => {
     }
 };
 
+
 exports.joinGame = async (req, res) => {
     if (!req.body.playerId) {
         return res.status(400).json({ error: "Player ID is required" });

@@ -6,6 +6,6 @@ router.get('/', gameController.getGames);
 router.get('/:id', gameController.getGame);
 router.post('/create', gameController.createGame);
 router.post('/join/:id', gameController.joinGame);
-router.patch('/updateStatus/:id', gameController.updateStatus);
+router.patch('/:id/updateStatus', gameController.updateStatus);
 
 module.exports = router;
