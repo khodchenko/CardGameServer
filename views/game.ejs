@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title><%= game.name %></title>
+</head>
+<body>
+<h1>Welcome to <%= game.name %></h1>
+<h2>Status: <%= game.status %></h2>
+<h3>Players:</h3>
+<ul>
+    <% game.players.forEach(player => { %>
+        <li><%= player.nickname %> (<%= player.username %>)</li>
+    <% }); %>
+</ul>
+<a href="/">Back to Games List</a>
+</body>
+</html>

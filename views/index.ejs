@@ -18,13 +18,12 @@
         </tr>
         </thead>
         <tbody>
-        <% games.forEach(game => { %>
+        <% games.forEach(function(game) { %>
             <tr>
-                <td><%= game.name %></td>
+                <td><a href="/game/<%= game._id %>"><%= game.name %></a></td>
                 <td><%= game.status %></td>
-                <td><%= game.players.length %></td>
             </tr>
-        <% }) %>
+        <% }); %>
         </tbody>
     </table>
 </div>
