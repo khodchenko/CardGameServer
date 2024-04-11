@@ -22,6 +22,7 @@ mongoose.connect('mongodb://localhost/cardGameDB')
 app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
+app.use(express.static('public'));
 
 // Настройка сессии
 app.use(session({
@@ -47,6 +48,7 @@ app.get('/', async (req, res) => {
             user: req.session.user
         });
     } catch (error) {
+        console.error('Error loading games:', error);
         res.status(500).send('Server Error ' + error);
     }
 });

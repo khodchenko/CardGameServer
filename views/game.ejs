@@ -3,39 +3,83 @@
 <head>
     <meta charset="UTF-8">
     <title><%= game.name %></title>
-    <script>
-        function startGame(gameId) {
-            fetch('/game/' + gameId + '/updateStatus', {
-                method: 'PATCH',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ status: 'playing' })
-            })
-                .then(response => response.json())
-                .then(data => {
-                    window.location.reload(); // Reload the page to update the display
-                })
-                .catch((error) => {
-                    console.error('Error:', error);
-                });
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        body {
+            background: #f4f4f9;
+            padding-top: 20px;
         }
-    </script>
+        .container {
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        h1, h2, h3 {
+            color: #333;
+        }
+        .btn-primary {
+            background-color: #0056b3;
+            border-color: #0056b3;
+        }
+        .btn-primary:hover {
+            background-color: #003d82;
+            border-color: #003d82;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            padding: 8px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .back-link {
+            display: inline-block;
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-<h1>Welcome to <%= game.name %></h1>
-<h2>Status: <%= game.status %></h2>
-<h3>Players:</h3>
-<ul>
-    <% game.players.forEach(player => { %>
-        <li><%= player.nickname %> (<%= player.username %>)</li>
-    <% }); %>
-</ul>
+<div class="container">
+    <h1>Welcome to <%= game.name %></h1>
+    <h2>Status: <%= game.status %></h2>
+    <h3>Players:</h3>
+    <ul>
+        <% game.players.forEach(player => { %>
+            <li><%= player.nickname %> (<%= player.username %>)</li>
+        <% }); %>
+    </ul>
 
-<% if (game.status === 'waiting') { %>
-    <button onclick="startGame('<%= game._id %>')">Start Game</button>
-<% } %>
+    <% if (game.status === 'waiting') { %>
+        <button class="btn btn-primary" onclick="startGame('<%= game._id %>')">Start Game</button>
+    <% } %>
 
-<a href="/">Back to Games List</a>
+    <a href="/" class="back-link">&larr; Back to Games List</a>
+</div>
+
+<script>
+    function startGame(gameId) {
+        fetch('/game/' + gameId + '/updateStatus', {
+            method: 'PATCH',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({ status: 'playing' })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if(data.message === 'Game status updated successfully') {
+                    window.location.reload(); // Reload the page to update the display
+                } else {
+                    console.error('Error:', data.error);
+                }
+            })
+            .catch((error) => {
+                console.error('Error:', error);
+            });
+    }
+</script>
 </body>
 </html>

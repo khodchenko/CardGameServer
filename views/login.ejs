@@ -14,26 +14,36 @@
             height: 100vh;
             margin: 0;
         }
-        form {
-            background: white;
+        .container {
+            width: 100%;
+            max-width: 360px; /* Limit the width of form container */
             padding: 20px;
+            background: white;
             border-radius: 8px;
             box-shadow: 0 0 10px rgba(0,0,0,0.1);
         }
+        h1 {
+            color: #333;
+            text-align: center; /* Center align the title */
+        }
+        form {
+            display: block;
+            margin-top: 20px;
+        }
         input[type="email"], input[type="password"] {
-            width: calc(100% - 22px);
+            width: 100%; /* Full width */
             padding: 10px;
             margin-top: 8px;
             border: 1px solid #ccc;
             border-radius: 4px;
-            display: block;
+            box-sizing: border-box; /* Includes padding and border in the element's width and height */
         }
         button {
             background: #0056b3;
             color: white;
             border: none;
             padding: 10px 15px;
-            margin-top: 12px;
+            margin-top: 20px; /* Increased margin top */
             cursor: pointer;
             width: 100%;
             border-radius: 4px;
@@ -43,7 +53,7 @@
         }
         p {
             text-align: center;
-            margin-top: 20px;
+            margin-top: 16px; /* Uniform margin for paragraph */
         }
         a {
             color: #007bff;
@@ -55,13 +65,15 @@
     </style>
 </head>
 <body>
-<h1>Login</h1>
-<form id="loginForm">
-    <input type="email" name="email" placeholder="Email" required>
-    <input type="password" name="password" placeholder="Password" required>
-    <button type="submit">Login</button>
-</form>
-<p>Don't have an account? <a href="/players/register">Register here</a></p>
+<div class="container">
+    <h1>Login</h1>
+    <form id="loginForm">
+        <input type="email" name="email" placeholder="Email" required>
+        <input type="password" name="password" placeholder="Password" required>
+        <button type="submit">Login</button>
+    </form>
+    <p>Don't have an account? <a href="/players/register">Register here</a></p>
+</div>
 
 <script>
     document.getElementById('loginForm').onsubmit = async (e) => {

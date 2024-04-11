@@ -11,7 +11,7 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-container a {
+        .header-container a, .logout-button, .login-button {
             margin-right: 15px;
         }
         .logout-button, .login-button {
@@ -24,10 +24,20 @@
             padding: 10px 20px;
             text-decoration: none;
             display: inline-block;
-            margin-left: 20px;
         }
         .logout-button:hover, .login-button:hover {
             background-color: #0056b3;
+        }
+        .avatar {
+            vertical-align: middle;
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            margin-right: 10px;
+        }
+        .online-counter {
+            text-align: right;
+            margin-top: 10px;
         }
     </style>
 </head>
@@ -37,6 +47,7 @@
         <h1>List of Games</h1>
         <% if (user) { %>
             <div>
+                <img src="<%= user.image || '/image/default.png' %>" alt="Avatar" class="avatar">
                 <span>Welcome, <%= user.nickname %>!</span>
                 <button class="logout-button" onclick="logout()">Logout</button>
             </div>
@@ -69,7 +80,7 @@
         fetch('/players/logout', { method: 'POST' })
             .then(response => {
                 if (response.ok) {
-                    window.location.href = '/';
+                    window.location.href = '/players/login';
                 }
             })
             .catch(error => console.error('Error logging out:', error));
@@ -77,3 +88,4 @@
 </script>
 </body>
 </html>
+```
