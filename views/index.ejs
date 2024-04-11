@@ -5,10 +5,45 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Game List</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <style>
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .header-container a {
+            margin-right: 15px;
+        }
+        .logout-button, .login-button {
+            cursor: pointer;
+            font-size: 16px;
+            color: white;
+            background-color: #007bff;
+            border: none;
+            border-radius: 5px;
+            padding: 10px 20px;
+            text-decoration: none;
+            display: inline-block;
+            margin-left: 20px;
+        }
+        .logout-button:hover, .login-button:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
 <div class="container">
-    <h1 class="mt-5">List of Games</h1>
+    <div class="header-container mt-5">
+        <h1>List of Games</h1>
+        <% if (user) { %>
+            <div>
+                <span>Welcome, <%= user.nickname %>!</span>
+                <button class="logout-button" onclick="logout()">Logout</button>
+            </div>
+        <% } else { %>
+            <a href="/players/login" class="login-button">Login/Register</a>
+        <% } %>
+    </div>
     <table class="table mt-3">
         <thead class="thead-dark">
         <tr>
@@ -22,11 +57,23 @@
             <tr>
                 <td><a href="/game/<%= game._id %>"><%= game.name %></a></td>
                 <td><%= game.status %></td>
-                <td><%= game.players.length %>/<%= 5 %></td> <!-- Изменено здесь -->
+                <td><%= game.players.length %>/<%= game.maxPlayers %></td>
             </tr>
         <% }); %>
         </tbody>
     </table>
 </div>
+
+<script>
+    function logout() {
+        fetch('/players/logout', { method: 'POST' })
+            .then(response => {
+                if (response.ok) {
+                    window.location.href = '/';
+                }
+            })
+            .catch(error => console.error('Error logging out:', error));
+    }
+</script>
 </body>
 </html>

@@ -6,6 +6,9 @@ const app = express();
 const port = process.env.PORT || 3000;
 const Game = require('./models/Game');
 
+require('dotenv').config();
+console.log("Using JWT Secret:", process.env.JWT_SECRET);
+
 // Установка EJS как шаблонизатора
 app.set('view engine', 'ejs');
 app.set('views', 'views');
@@ -16,7 +19,7 @@ mongoose.connect('mongodb://localhost/cardGameDB')
     .catch(err => console.error('MongoDB connection error:', err));
 
 // Middleware
-app.use(express.urlencoded({ extended: true }));
+app.use(express.urlencoded({extended: true}));
 app.use(express.json());
 app.use(cookieParser());
 
@@ -25,7 +28,7 @@ app.use(session({
     secret: "verysecretkey12345",  //todo Используйте переменные окружения для секретов
     resave: false,
     saveUninitialized: false,
-    cookie: { secure: false } //todo Для HTTPS установите true
+    cookie: {secure: false} //todo Для HTTPS установите true
 }));
 
 // Роуты
@@ -39,7 +42,10 @@ app.use('/players', playerRoutes);
 app.get('/', async (req, res) => {
     try {
         const games = await Game.find();
-        res.render('index', { games });
+        res.render('index', {
+            games: games,
+            user: req.session.user
+        });
     } catch (error) {
         res.status(500).send('Server Error ' + error);
     }
@@ -47,7 +53,7 @@ app.get('/', async (req, res) => {
 
 // Обработка несуществующих маршрутов
 app.use((req, res) => {
-    res.status(404).send({ error: "Route not found" });
+    res.status(404).send({error: "Route not found"});
 });
 
 // Запуск сервера

@@ -12,6 +12,12 @@ router.get('/register', (req, res) => {
 
 router.post('/login', loginPlayer);
 router.post('/register', registerPlayer);
+
+router.post('/logout', (req, res) => {
+    req.session.destroy(() => {
+        res.redirect('/');  // Очистка сессии и редирект на страницу входа
+    });
+});
 router.get('/', getPlayers);
 
 module.exports = router;

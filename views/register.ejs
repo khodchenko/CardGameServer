@@ -4,24 +4,92 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f4f9;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+        }
+        form {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+        input[type="email"], input[type="password"], input[type="text"] {
+            width: calc(100% - 22px);
+            padding: 10px;
+            margin-top: 8px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            display: block;
+        }
+        button {
+            background: #0056b3;
+            color: white;
+            border: none;
+            padding: 10px 15px;
+            margin-top: 12px;
+            cursor: pointer;
+            width: 100%;
+            border-radius: 4px;
+        }
+        button:hover {
+            background: #003d82;
+        }
+        p {
+            text-align: center;
+            margin-top: 20px;
+        }
+        a {
+            color: #007bff;
+            text-decoration: none;
+        }
+        a:hover {
+            text-decoration: underline;
+        }
+    </style>
 </head>
 <body>
 <h1>Register</h1>
-<form action="/players/register" method="post">
-    <label>
-        <input type="text" name="username" placeholder="Username" required>
-    </label>
-    <label>
-        <input type="password" name="password" placeholder="Password" required>
-    </label>
-    <label>
-        <input type="text" name="nickname" placeholder="Nickname" required>
-    </label>
-    <label>
-        <input type="text" name="image" placeholder="Image URL">
-    </label>
+<form id="registerForm">
+    <input type="email" name="email" placeholder="Email" required>
+    <input type="password" name="password" placeholder="Password" required>
+    <input type="text" name="nickname" placeholder="Nickname" required>
+    <input type="text" name="image" placeholder="Image URL (optional)">
     <button type="submit">Register</button>
 </form>
 <p>Already have an account? <a href="/players/login">Login here</a></p>
+
+<script>
+    document.getElementById('registerForm').onsubmit = async (e) => {
+        e.preventDefault();
+        const form = e.target;
+        const formData = new FormData(form);
+        const response = await fetch('/players/register', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                email: formData.get('email'),
+                password: formData.get('password'),
+                nickname: formData.get('nickname'),
+                image: formData.get('image') || 'default.png' // Default image if none provided
+            })
+        });
+        if (response.ok) {
+            alert('Registration successful!');
+            window.location.href = '/players/login'; // Redirect to login page after successful registration
+        } else {
+            const error = await response.json();
+            alert('Failed to register: ' + (error.message || 'Unknown error'));
+        }
+    };
+</script>
 </body>
 </html>
