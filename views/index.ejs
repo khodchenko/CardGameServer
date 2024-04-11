@@ -22,6 +22,7 @@
             <tr>
                 <td><a href="/game/<%= game._id %>"><%= game.name %></a></td>
                 <td><%= game.status %></td>
+                <td><%= game.players.length %>/<%= 5 %></td> <!-- Изменено здесь -->
             </tr>
         <% }); %>
         </tbody>

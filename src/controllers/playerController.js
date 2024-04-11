@@ -1,32 +1,44 @@
 const Player = require('../models/Player');
 const bcrypt = require('bcryptjs');
+const jwt = require('jsonwebtoken');
 
 exports.registerPlayer = async (req, res) => {
     const { username, password, nickname, image } = req.body;
     try {
-        let player = await Player.findOne({ username });
-        if (player) {
-            return res.status(400).json({ error: "Username already exists", field: "username" });
+        const existingPlayer = await Player.findOne({ username });
+        if (existingPlayer) {
+            return res.status(400).json({ error: "Username already exists" });
         }
-        const salt = await bcrypt.genSalt(10);
-        const hashedPassword = await bcrypt.hash(password, salt);
-
-        player = new Player({
-            username,
-            password: hashedPassword,
-            nickname,
-            image
-        });
+        const player = new Player({ username, password, nickname, image: image || 'default.png' }); // Предоставьте значение по умолчанию для изображения
         await player.save();
-        res.status(201).json({ message: "Player registered successfully", player: {
-                id: player._id,
-                username: player.username,
-                nickname: player.nickname,
-                image: player.image
-            }});
+
+        const token = jwt.sign({ id: player._id }, process.env.JWT_SECRET || 'fallbacksecret', { expiresIn: '1h' }); // Используйте значение по умолчанию, если переменная среды не задана
+        req.session.token = token;  // Сохраните токен в сессии
+        res.status(201).json({ token });
     } catch (error) {
         console.error("Registration error:", error);
-        res.status(500).json({ error: "Server error during registration", details: error.message });
+        res.status(500).json({ error: "Error registering player" });
+    }
+};
+
+exports.loginPlayer = async (req, res) => {
+    const { username, password } = req.body;
+    try {
+        const player = await Player.findOne({ username });
+        if (!player) {
+            return res.status(404).json({ error: "User not found" });
+        }
+
+        const isMatch = await bcrypt.compare(password, player.password);
+        if (!isMatch) {
+            return res.status(400).json({ error: "Invalid credentials" });
+        }
+
+        const token = jwt.sign({ id: player._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+        res.json({ token });
+    } catch (error) {
+        console.error("Login error:", error);
+        res.status(500).json({ error: "Server error during authentication" });
     }
 };
 
