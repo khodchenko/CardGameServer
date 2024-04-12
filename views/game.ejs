@@ -19,13 +19,21 @@
         h1, h2, h3 {
             color: #333;
         }
-        .btn-primary {
+        .btn-primary, .btn-danger {
             background-color: #0056b3;
             border-color: #0056b3;
         }
-        .btn-primary:hover {
+        .btn-primary:hover, .btn-danger:hover {
             background-color: #003d82;
             border-color: #003d82;
+        }
+        .btn-danger {
+            background-color: #dc3545;
+            border-color: #dc3545;
+        }
+        .btn-danger:hover {
+            background-color: #c82333;
+            border-color: #bd2130;
         }
         ul {
             list-style: none;
@@ -46,7 +54,7 @@
     <h1>Welcome to <%= game.name %></h1>
     <h2>Status: <%= game.status %></h2>
     <h3>Players:</h3>
-    <ul>
+    <ul id="playersList">
         <% game.players.forEach(player => { %>
             <li><%= player.nickname %> (<%= player.username %>)</li>
         <% }); %>
@@ -55,30 +63,37 @@
     <% if (game.status === 'waiting') { %>
         <button class="btn btn-primary" onclick="startGame('<%= game._id %>')">Start Game</button>
     <% } %>
-
+    <% if (game.players.some(player => player._id.toString() === user._id.toString())) { %>
+        <button class="btn btn-danger" onclick="leaveGame('<%= game._id %>')">Leave Game</button>
+    <% } %>
     <a href="/" class="back-link">&larr; Back to Games List</a>
 </div>
 
+<script src="/socket.io/socket.io.js"></script>
 <script>
+    const socket = io(); // Connect to the Socket.io client
+
+    socket.on('updatePlayers', (players) => {
+        const playersList = document.getElementById('playersList');
+        playersList.innerHTML = ''; // Clear the list of players
+        players.forEach(player => {
+            const li = document.createElement('li');
+            li.textContent = `${player.nickname} (${player.username})`;
+            playersList.appendChild(li);
+        });
+    });
+
+    socket.on('gameStarted', () => {
+        window.location.reload(); // Reload the page to update the display
+    });
+
     function startGame(gameId) {
-        fetch('/game/' + gameId + '/updateStatus', {
-            method: 'PATCH',
-            headers: {
-                'Content-Type': 'application/json',
-            },
-            body: JSON.stringify({ status: 'playing' })
-        })
-            .then(response => response.json())
-            .then(data => {
-                if(data.message === 'Game status updated successfully') {
-                    window.location.reload(); // Reload the page to update the display
-                } else {
-                    console.error('Error:', data.error);
-                }
-            })
-            .catch((error) => {
-                console.error('Error:', error);
-            });
+        socket.emit('startGame', gameId); // Emit the start game event to the server
+    }
+
+    function leaveGame(gameId) {
+        socket.emit('leaveGame', gameId, '<%= user._id %>'); // Emit the leave game event to the server
+        window.location.href = '/'; // Redirect to the main page
     }
 </script>
 </body>

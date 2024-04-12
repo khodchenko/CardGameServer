@@ -26,10 +26,10 @@ app.use(express.static('public'));
 
 // Настройка сессии
 app.use(session({
-    secret: "verysecretkey12345",  //todo Используйте переменные окружения для секретов
+    secret: "verysecretkey12345",  // Используйте переменные окружения для секретов
     resave: false,
     saveUninitialized: false,
-    cookie: {secure: false} //todo Для HTTPS установите true
+    cookie: { secure: false }  // Для HTTPS установите true
 }));
 
 // Роуты

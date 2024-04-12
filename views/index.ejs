@@ -11,10 +11,10 @@
             justify-content: space-between;
             align-items: center;
         }
-        .header-container a, .logout-button, .login-button {
+        .header-container a, .logout-button, .login-button, .create-game-button {
             margin-right: 15px;
         }
-        .logout-button, .login-button {
+        .logout-button, .login-button, .create-game-button {
             cursor: pointer;
             font-size: 16px;
             color: white;
@@ -25,7 +25,7 @@
             text-decoration: none;
             display: inline-block;
         }
-        .logout-button:hover, .login-button:hover {
+        .logout-button:hover, .login-button:hover, .create-game-button:hover {
             background-color: #0056b3;
         }
         .avatar {
@@ -50,6 +50,7 @@
                 <img src="<%= user.image || '/image/default.png' %>" alt="Avatar" class="avatar">
                 <span>Welcome, <%= user.nickname %>!</span>
                 <button class="logout-button" onclick="logout()">Logout</button>
+                <button class="create-game-button" onclick="createGame()">Create New Game</button>
             </div>
         <% } else { %>
             <a href="/players/login" class="login-button">Login/Register</a>
@@ -85,7 +86,30 @@
             })
             .catch(error => console.error('Error logging out:', error));
     }
+
+    function createGame() {
+        const nickname = '<%= user ? user.nickname : "Guest" %>';  // Использование тернарного оператора для проверки существования user
+        fetch('/game/create', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                name: nickname + ' Game',
+                players: [], // Игроки изначально не добавляются
+                status: 'waiting'
+            })
+        })
+            .then(response => response.json())
+            .then(data => {
+                if (data && data.game) {
+                    window.location.href = '/game/' + data.game._id; // Переход в созданную игру
+                } else {
+                    alert('Failed to create game: ' + (data.error || 'Unknown error'));
+                }
+            })
+            .catch(error => console.error('Error creating game:', error));
+    }
 </script>
 </body>
 </html>
-```
