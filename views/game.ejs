@@ -66,7 +66,6 @@
     <% if (game.players.some(player => player._id.toString() === user._id.toString())) { %>
         <button class="btn btn-danger" onclick="leaveGame('<%= game._id %>')">Leave Game</button>
     <% } %>
-    <a href="/" class="back-link">&larr; Back to Games List</a>
 </div>
 
 <script src="/socket.io/socket.io.js"></script>
@@ -75,10 +74,10 @@
 
     socket.on('updatePlayers', (players) => {
         const playersList = document.getElementById('playersList');
-        playersList.innerHTML = ''; // Clear the list of players
+        playersList.innerHTML = ''; // Очищаем список игроков
         players.forEach(player => {
             const li = document.createElement('li');
-            li.textContent = `${player.nickname} (${player.username})`;
+            li.textContent = `${player.nickname} (${player.username})`; // Убедитесь, что данные поля существуют
             playersList.appendChild(li);
         });
     });
